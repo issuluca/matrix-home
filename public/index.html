@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Matrix Home</title>
+<style>
+  body{margin:0;background:#000;color:#00cc66;font-family:monospace;overflow:hidden}
+  #matrix{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+  .container{position:relative;z-index:1;padding:20px;max-width:1100px;margin:0 auto}
+  h1{text-align:center;margin-top:10px;text-shadow:0 0 8px #00cc66}
+  .toolbar{display:flex;justify-content:center;gap:12px;margin:12px 0;align-items:center;flex-wrap:wrap}
+  .btn{background:transparent;border:1px solid #00cc66;padding:8px 14px;color:#00cc66;cursor:pointer}
+  .btn.active{background:#00cc66;color:#000}
+  .search{border:1px solid #00cc66;padding:8px;color:#00cc66;background:transparent;width:260px}
+  .content{height:70vh;overflow:auto;padding:10px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:8px;border-bottom:1px solid rgba(0,204,102,0.15)}
+  a{color:#00cc66}
+  .admin{position:fixed;right:12px;top:12px}
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="container">
+  <h1>Matrix Home</h1>
+  <div class="toolbar">
+    <button class="btn active" data-section="INTERNET">Internet</button>
+    <button class="btn" data-section="SERRAMANNA">Serramanna</button>
+    <button class="btn" data-section="LODI">Lodi</button>
+    <input id="search" class="search" placeholder="Cerca tra tutti i link...">
+    <div style="margin-left:12px"><button id="logout" class="btn">Logout</button></div>
+  </div>
+  <div class="content" id="content"></div>
+  <div class="admin"><a href="/admin" class="btn">Admin</a></div>
+</div>
+
+<script>
+/* Matrix rain lightweight */
+const canvas=document.getElementById('matrix'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();window.onresize=resize;
+const letters='アカサタナハマヤラワガABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const fontSize=14;let columns=Math.floor(canvas.width/fontSize);
+let drops=new Array(columns).fill(1);
+function draw(){
+  ctx.fillStyle='rgba(0,0,0,0.09)';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='rgba(0,150,80,0.25)';ctx.font=fontSize+'px monospace';
+  for(let i=0;i<drops.length;i++){
+    const text=letters.charAt(Math.floor(Math.random()*letters.length));
+    ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+    if(drops[i]*fontSize>canvas.height && Math.random()>0.975) drops[i]=0;
+    drops[i]++;
+  }
+}
+setInterval(draw,80);
+
+/* fetch links and render */
+let allData=[];
+async function load(){
+  const res=await fetch('/api/links');
+  if(!res.ok){ document.getElementById('content').innerText='Errore caricamento'; return; }
+  const j=await res.json();
+  allData = j.sites || [];
+  renderSection('INTERNET');
+}
+function renderSection(loc){
+  const content=document.getElementById('content');
+  const rows = allData.filter(s => s.location && s.location.toUpperCase()===loc.toUpperCase());
+  if(loc==='INTERNET'){
+    let html = '<table><tr><th>Titolo</th><th>Link</th></tr>';
+    rows.forEach(r=> html += `<tr><td>${r.title}</td><td><a href="${r.cloud||r.local}" target="_blank">${r.cloud || r.local || ''}</a></td></tr>`);
+    html += '</table>'; content.innerHTML = html;
+  } else {
+    let html = '<table><tr><th>Titolo</th><th>Link Interno</th><th>Link Esterno</th></tr>';
+    rows.forEach(r=> html += `<tr><td>${r.title}</td><td><a href="${r.local}" target="_blank">${r.local || ''}</a></td><td><a href="${r.cloud}" target="_blank">${r.cloud || ''}</a></td></tr>`);
+    html += '</table>'; content.innerHTML = html;
+  }
+}
+
+/* toolbar handlers */
+document.querySelectorAll('.btn[data-section]').forEach(b=>{
+  b.addEventListener('click', ()=> {
+    document.querySelectorAll('.btn[data-section]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    renderSection(b.getAttribute('data-section'));
+  });
+});
+
+/* search global */
+document.getElementById('search').addEventListener('input', (e)=>{
+  const q=e.target.value.toLowerCase();
+  const filtered = allData.filter(s => JSON.stringify(s).toLowerCase().includes(q));
+  if(!q) { const active=document.querySelector('.btn.active'); renderSection(active.getAttribute('data-section')); return; }
+  let html = '<table><tr><th>Categoria</th><th>Titolo</th><th>Link</th></tr>';
+  filtered.forEach(r => html += `<tr><td>${r.location}</td><td>${r.title}</td><td><a href="${r.cloud||r.local}" target="_blank">${r.cloud||r.local||''}</a></td></tr>`);
+  html += '</table>'; document.getElementById('content').innerHTML=html;
+});
+
+/* logout */
+document.getElementById('logout').addEventListener('click', async ()=>{
+  await fetch('/logout', { method:'POST' });
+  window.location='/login';
+});
+
+load();
+</script>
+</body>
+</html>
