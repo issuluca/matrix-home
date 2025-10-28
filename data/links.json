@@ -1,0 +1,320 @@
+[
+    {
+        "name": "17TRACK",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://buyer.17track.net/it"
+    },
+    {
+        "name": "AMAZON",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://www.amazon.it/"
+    },
+    {
+        "name": "ARUBA-PEC",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://webmail.aruba.it/"
+    },
+    {
+        "name": "CLOUDFLARE",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://dash.cloudflare.com/"
+    },
+    {
+        "name": "CONTACT",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://sherr.it/YdXTVCoCoTmPEMh"
+    },
+    {
+        "name": "EBAY",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://www.ebay.it/"
+    },
+    {
+        "name": "GMAIL",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://mail.google.com/mail/u/0/#inbox"
+    },
+    {
+        "name": "GOOGLE",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://www.google.it/"
+    },
+    {
+        "name": "PRIVALIA",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://it.privalia.com/gr/home/default"
+    },
+    {
+        "name": "PRIVE’ BY ZALANDO",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://www.zalando-prive.it"
+    },
+    {
+        "name": "SUBITO.IT",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://www.subito.it"
+    },
+    {
+        "name": "WALLAPOP",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://it.wallapop.com"
+    },
+    {
+        "name": "ZALANDO",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://www.zalando.it"
+    },
+    {
+        "name": "VINTED",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://www.vinted.it/"
+    },
+    {
+        "name": "CHAT-GPT",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://chatgpt.com/"
+    },
+    {
+        "name": "GEMINI",
+        "location": "INTERNET",
+        "local": "",
+        "cloud": "https://gemini.google.com/app/"
+    },
+    {
+        "name": "ESPHOME",
+        "location": "LODI",
+        "local": "http://10.30.30.101:6052/",
+        "cloud": ""
+    },
+    {
+        "name": "FLAME",
+        "location": "LODI",
+        "local": "http://10.30.30.103:5005/",
+        "cloud": "https://flame.issu.fun/"
+    },
+    {
+        "name": "HEIMDALE",
+        "location": "LODI",
+        "local": "http://10.30.30.251:7990/",
+        "cloud": "https://home.issu.fun"
+    },
+    {
+        "name": "HOME ASSISTANT",
+        "location": "LODI",
+        "local": "http://10.30.30.101:8123/",
+        "cloud": "https://ha.issu.fun/"
+    },
+    {
+        "name": "MUSIC-ASSISTANT",
+        "location": "LODI",
+        "local": "http://10.30.30.101:8095/",
+        "cloud": "https://music2.issu.fun/"
+    },
+    {
+        "name": "NETDATA",
+        "location": "LODI",
+        "local": "http://10.30.30.100:19999/spaces/pve/rooms/local/overview#metrics_correlation=false&after=-900&before=0&utc=Europe%2FRome&offset=%2B1&timezoneName=Amsterdam%2C%20Berlin%2C%20Bern%2C%20Rome%2C%20Stockholm%2C%20Vienna&modal=&modalTab=&modalParams=&selectedIntegrationCategory=deploy.operating-systems&force_play=false&local--chartName-val=menu_system",
+        "cloud": ""
+    },
+    {
+        "name": "Nextcloud",
+        "location": "LODI",
+        "local": "https://10.30.30.244:443/",
+        "cloud": "https://next.issu.fun/"
+    },
+    {
+        "name": "NODE-RED",
+        "location": "LODI",
+        "local": "http://10.30.30.101:1880/",
+        "cloud": "https://node.issu.fun/"
+    },
+    {
+        "name": "OPENMEDIAVAULT",
+        "location": "LODI",
+        "local": "http://10.30.30.252",
+        "cloud": ""
+    },
+    {
+        "name": "OPENMEDIAVAULT-FILE",
+        "location": "LODI",
+        "local": "http://10.30.30.252:3670/",
+        "cloud": "https://ovm.issu.fun/"
+    },
+    {
+        "name": "PI-HOLE",
+        "location": "LODI",
+        "local": "http://10.30.30.246/admin/",
+        "cloud": ""
+    },
+    {
+        "name": "PORTAINER",
+        "location": "LODI",
+        "local": "https://10.30.30.103:9443/",
+        "cloud": "https://portainer.issu.fun/"
+    },
+    {
+        "name": "PROXMOX",
+        "location": "LODI",
+        "local": "https://10.30.30.100:8006/",
+        "cloud": "https://prox30.issu.fun/"
+    },
+    {
+        "name": "ZIGBEE2MQTT",
+        "location": "LODI",
+        "local": "http://10.30.30.101:8099/",
+        "cloud": ""
+    },
+    {
+        "name": "ABB-SOLAR",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.40.85/#/dashboard/",
+        "cloud": ""
+    },
+    {
+        "name": "ESPHOME",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.40.199:6052/",
+        "cloud": ""
+    },
+    {
+        "name": "FASTWEB",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.5.200/#/login",
+        "cloud": ""
+    },
+    {
+        "name": "FRIGATE",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.40.130:5000/",
+        "cloud": "https://frigate.issu.fun/"
+    },
+    {
+        "name": "GUACAMOLE",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.180:8080/",
+        "cloud": "https://guac.issu.fun/guacamole/"
+    },
+    {
+        "name": "HEIMDALE",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.201/",
+        "cloud": "https://jhomes.issu.fun/"
+    },
+    {
+        "name": "HOME ASSISTANT",
+        "location": "SERRAMANNA",
+        "local": "https://192.168.40.199:8123/",
+        "cloud": "https://has.issu.fun/"
+    },
+    {
+        "name": "JELLIFIN",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.202:8096/",
+        "cloud": "https://jelly.issu.fun"
+    },
+    {
+        "name": "NAVIDROME",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.253:30043/",
+        "cloud": "https://navi.issu.fun/"
+    },
+    {
+        "name": "NETDATA",
+        "location": "SERRAMANNA",
+        "local": "http://10.20.20.240:19999/",
+        "cloud": "https://app.netdata.cloud/spaces/luca-mocci-space/rooms/all-nodes/nodes?cloudRoute=%2F&email=luca.mocci%40gmail.com&token=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE2ODk3ODkwOTcsImlhdCI6MTY4OTc4ODE5NywiZW1haWwiOiJsdWNhLm1vY2NpQGdtYWlsLmNvbSIsIm9fYXV0aF91c2VyIjp7IklEIjoiIiwiRW1haWwiOiIiLCJOYW1lIjoiIiwiQXZhdGFyVVJMIjoiIn19._cFbZ0XZAvFi5CmJ5wvVM8WUbE_FGEvPUy69GTS0yT0&utm_content=top_navigation_sign_up&utm_source=website&utm_source=sendgrid.com&utm_medium=email&utm_campaign=website##metrics_correlation=false&after=-900&before=0&utc=Europe%2FRome&offset=%2B2&timezoneName=Amsterdam%252C%2520Berlin%252C%2520Bern%252C%2520Rome%252C%2520Stockholm%252C%2520Vienna&modal=&modalTab=&metrics_correlation=false"
+    },
+    {
+        "name": "NODE-RED",
+        "location": "SERRAMANNA",
+        "local": "https://192.168.40.199:1880/",
+        "cloud": ""
+    },
+    {
+        "name": "PLEX",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.40.252:32400/web/index.html#!/setup/af87da04671bffb9352cae9cb5ce2ee6276133f1",
+        "cloud": ""
+    },
+    {
+        "name": "PORTAINER 10",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.201:9000/",
+        "cloud": ""
+    },
+    {
+        "name": "PORTAINER FRIGATE",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.40.130:9000/",
+        "cloud": ""
+    },
+    {
+        "name": "Portainer Trunk",
+        "location": "SERRAMANNA",
+        "local": "https://10.20.20.244:9443/",
+        "cloud": ""
+    },
+    {
+        "name": "PROXMOX",
+        "location": "SERRAMANNA",
+        "local": "https://10.20.20.240:8006/",
+        "cloud": "https://prox.issu.fun/"
+    },
+    {
+        "name": "QNAP",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.50:8020/",
+        "cloud": ""
+    },
+    {
+        "name": "TRUENAS-FILE",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.253:30051/",
+        "cloud": "https://file.issu.fun/"
+    },
+    {
+        "name": "TURNKEY 172",
+        "location": "SERRAMANNA",
+        "local": "https://192.168.10.201:12321/",
+        "cloud": ""
+    },
+    {
+        "name": "UNIFI",
+        "location": "SERRAMANNA",
+        "local": "https://10.20.20.245:8443/",
+        "cloud": ""
+    },
+    {
+        "name": "UPTIME KUMA",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.201:1337/",
+        "cloud": ""
+    },
+    {
+        "name": "WIREGUARD",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.10.201:51821/",
+        "cloud": ""
+    },
+    {
+        "name": "ZIGBEE2MQTT",
+        "location": "SERRAMANNA",
+        "local": "http://192.168.40.150:8092/",
+        "cloud": ""
+    }
+]
