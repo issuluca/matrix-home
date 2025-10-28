@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Matrix Admin</title>
+<style>
+  body{margin:0;background:#000;color:#00cc66;font-family:monospace;padding:14px}
+  textarea{width:100%;height:320px;background:#001a00;color:#bfffd6;padding:8px;border:1px solid #004d20}
+  button{padding:8px 12px;margin-top:8px;background:#00cc66;border:none;color:#000}
+  .note{font-size:13px;color:#00cc66aa}
+</style>
+</head>
+<body>
+  <h1>Admin — Modifica links.json</h1>
+  <div class="note">Modifica il JSON e clicca Salva. Formato: {"sites":[{...}]}</div>
+  <textarea id="ta"></textarea>
+  <div>
+    <button id="save">Salva</button>
+    <button id="back">Indietro</button>
+  </div>
+<script>
+async function load(){
+  const r = await fetch('/api/links');
+  const j = await r.json();
+  document.getElementById('ta').value = JSON.stringify(j, null, 2);
+}
+document.getElementById('save').addEventListener('click', async ()=>{
+  try {
+    const data = JSON.parse(document.getElementById('ta').value);
+    const res = await fetch('/api/links', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    if(res.ok) alert('Salvato'); else alert('Errore');
+  } catch(e){ alert('JSON non valido'); }
+});
+document.getElementById('back').addEventListener('click', ()=> location.href='/');
+load();
+</script>
+</body>
+</html>
