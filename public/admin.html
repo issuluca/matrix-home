@@ -2,38 +2,185 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Matrix Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrix Admin</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: black;
+      color: #00ff66;
+      padding: 20px;
+    }
+    h1 {
+      color: #00ff99;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      border: 1px solid #00ff66;
+      border-radius: 10px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 10px #00ff66;
+    }
+    .login-box {
+      text-align: center;
+    }
+    input, button, select {
+      background: black;
+      border: 1px solid #00ff66;
+      color: #00ff66;
+      font-family: inherit;
+      padding: 5px;
+      margin: 5px;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #00ff66;
+      color: black;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    td, th {
+      border: 1px solid #00ff66;
+      padding: 5px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <canvas id="matrixRain"></canvas>
-  <div id="main-content">
-    <h1>Gestione Link</h1>
-    <a href="/logout">Logout</a>
-    <form id="addForm">
-      <input type="text" name="SITO" placeholder="Nome sito" required>
-      <input type="text" name="LOCATION" placeholder="Categoria (INTERNET/LODI/SERRAMANNA)" required>
-      <input type="text" name="LOCAL" placeholder="Link locale">
-      <input type="text" name="CLOUD" placeholder="Link cloud">
-      <button type="submit">Aggiungi</button>
-    </form>
+  <h1>Matrix Home — Pannello Admin</h1>
+  <div class="container">
+    <div id="login" class="login-box">
+      <p><strong>Accesso Amministratore</strong></p>
+      <input type="text" id="user" placeholder="Username"><br>
+      <input type="password" id="pass" placeholder="Password"><br>
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="admin-panel" class="hidden">
+      <button onclick="logout()">Logout</button>
+      <button onclick="addRow()">+ Aggiungi link</button>
+      <table id="linksTable">
+        <thead>
+          <tr>
+            <th>Titolo</th>
+            <th>Categoria</th>
+            <th>Link locale</th>
+            <th>Link cloud</th>
+            <th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button onclick="saveChanges()">💾 Salva modifiche</button>
+    </div>
   </div>
 
   <script>
-    document.getElementById('addForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
+    let links = [];
+    let token = localStorage.getItem("token") || null;
 
-      const res = await fetch('/api/links', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+    async function login() {
+      const user = document.getElementById("user").value;
+      const pass = document.getElementById("pass").value;
+
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user, pass })
       });
 
-      if (res.ok) alert('Link aggiunto!');
-      else alert('Errore nel salvataggio');
-    });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        token = data.token;
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("admin-panel").classList.remove("hidden");
+        loadLinks();
+      } else {
+        alert("Credenziali errate!");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      location.reload();
+    }
+
+    async function loadLinks() {
+      const res = await fetch("/api/links");
+      links = await res.json();
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector("#linksTable tbody");
+      tbody.innerHTML = "";
+      links.forEach((item, i) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><input value="${item.SITO || ''}" onchange="update(${i}, 'SITO', this.value)"></td>
+          <td><select onchange="update(${i}, 'LOCATION', this.value)">
+            <option ${item.LOCATION === 'INTERNET' ? 'selected' : ''}>INTERNET</option>
+            <option ${item.LOCATION === 'LODI' ? 'selected' : ''}>LODI</option>
+            <option ${item.LOCATION === 'SERRAMANNA' ? 'selected' : ''}>SERRAMANNA</option>
+          </select></td>
+          <td><input value="${item.LOCAL || ''}" onchange="update(${i}, 'LOCAL', this.value)"></td>
+          <td><input value="${item.CLOUD || ''}" onchange="update(${i}, 'CLOUD', this.value)"></td>
+          <td><button onclick="removeRow(${i})">🗑️</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function update(index, field, value) {
+      links[index][field] = value;
+    }
+
+    function addRow() {
+      links.push({ SITO: "", LOCATION: "INTERNET", LOCAL: "", CLOUD: "" });
+      renderTable();
+    }
+
+    function removeRow(index) {
+      if (confirm("Vuoi davvero eliminare questo link?")) {
+        links.splice(index, 1);
+        renderTable();
+      }
+    }
+
+    async function saveChanges() {
+      const res = await fetch("/api/links", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(links)
+      });
+
+      if (res.ok) {
+        alert("✅ Modifiche salvate!");
+      } else {
+        alert("❌ Errore nel salvataggio!");
+      }
+    }
+
+    if (token) {
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("admin-panel").classList.remove("hidden");
+      loadLinks();
+    }
   </script>
 </body>
 </html>
