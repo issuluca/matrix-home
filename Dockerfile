@@ -1,18 +1,12 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
-
-COPY package.json package-lock.json* ./
-RUN npm ci --production
+COPY package*.json ./
+RUN npm install --production
 
 COPY . .
 
-# create data dir and set permissions
-RUN mkdir -p /app/data && chown -R node:node /app/data
+EXPOSE 8070
 
-USER node
+CMD ["node", "server/server.js"]
 
-ENV NODE_ENV=production
-EXPOSE 8080
-
-CMD ["node", "server.js"]
