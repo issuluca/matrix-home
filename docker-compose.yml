@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  matrix-home:
+    image: ghcr.io/issuluca/matrix-home:latest
+    container_name: matrix-home
+    restart: unless-stopped
+    ports:
+      - "8070:8070"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
