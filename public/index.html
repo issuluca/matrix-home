@@ -1,33 +1,30 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Matrix Home</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <canvas id="matrixRain"></canvas>
 
-  <div id="main-content">
+  <div class="container">
     <h1>MATRIX HOME</h1>
-    <div class="top-bar">
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="INTERNET">🌐 Internet</button>
-        <button class="tab-btn" data-tab="SERRAMANNA">🏠 Serramanna</button>
-        <button class="tab-btn" data-tab="LODI">🏙️ Lodi</button>
+
+    <div class="controls">
+      <div class="buttons">
+        <button class="tab-button active" data-tab="INTERNET">INTERNET</button>
+        <button class="tab-button" data-tab="SERRAMANNA">SERRAMANNA</button>
+        <button class="tab-button" data-tab="LODI">LODI</button>
       </div>
-      <div class="search-box">
-        <input type="text" id="search" placeholder="Cerca..." autofocus>
-        <span class="cursor">█</span>
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Cerca..." autofocus />
+        <span class="cursor"></span>
       </div>
     </div>
-    <table id="linksTable">
-      <thead>
-        <tr id="tableHeader"></tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
+
+    <div id="tableContainer"></div>
   </div>
 
   <script src="script.js"></script>
