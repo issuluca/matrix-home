@@ -26,6 +26,12 @@ app.use(
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "public")));
 
+// ✅ AGGIUNGI QUESTO BLOCCO
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+// ✅ FINE BLOCCO
+
 function isAuthenticated(req, res, next) {
   if (req.session.loggedIn) return next();
   res.redirect("/login.html");
@@ -66,5 +72,5 @@ app.post("/api/links", isAuthenticated, (req, res) => {
 
 // --- Avvio server ---
 app.listen(PORT, () => {
-  console.log(`Matrix Home in esecuzione su http://localhost:${PORT}`);
+  console.log(`✅ Matrix Home in esecuzione su http://localhost:${PORT}`);
 });
