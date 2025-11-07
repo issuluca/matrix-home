@@ -1,0 +1,80 @@
+[
+  {
+    "SITO": "17TRACK",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://buyer.17track.net/it"
+  },
+  {
+    "SITO": "AMAZON",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://www.amazon.it/"
+  },
+  {
+    "SITO": "ARUBA-PEC",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://webmail.aruba.it/"
+  },
+  {
+    "SITO": "CLOUDFLARE",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://dash.cloudflare.com/"
+  },
+  {
+    "SITO": "EBAY",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://www.ebay.it/"
+  },
+  {
+    "SITO": "GMAIL",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://mail.google.com/mail/u/0/#inbox"
+  },
+  {
+    "SITO": "GOOGLE",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://www.google.it/"
+  },
+  {
+    "SITO": "PRIVALIA",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://it.privalia.com/gr/home/default"
+  },
+  {
+    "SITO": "PRIVE’ BY ZALANDO",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://www.zalando-prive.it"
+  },
+  {
+    "SITO": "SUBITO.IT",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://www.subito.it"
+  },
+  {
+    "SITO": "WALLAPOP",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://it.wallapop.com"
+  },
+  {
+    "SITO": "ZALANDO",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://www.zalando.it"
+  },
+  {
+    "SITO": "VINTED",
+    "GROUP": "INTERNET",
+    "LOCAL": "",
+    "CLOUD": "https://www.vinted.it/"
+  }
+]

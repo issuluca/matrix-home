@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matrix Home</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: black;
+      color: #00ff55;
+      font-family: monospace;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    #matrixCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
+      padding-bottom: 2rem;
+    }
+
+    h1 {
+      color: #00ff55;
+      margin: 1rem 0;
+      font-size: 2rem;
+      text-shadow: 0 0 10px #00ff55;
+    }
+
+    input, button {
+      background: #001100;
+      color: #00ff55;
+      border: 1px solid #00ff55;
+      padding: 0.6rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: monospace;
+    }
+
+    input.uppercase {
+      text-transform: uppercase;
+    }
+
+    button:hover {
+      background: #003300;
+      color: #00ff55;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 1.3rem;
+      background: rgba(0, 0, 0, 0.75);
+      box-shadow: 0 0 15px #00ff55;
+    }
+
+    th, td {
+      border-bottom: 1px solid #004400;
+      padding: 10px;
+      text-align: left;
+      word-break: break-word;
+    }
+
+    td a {
+      color: #00ff55;
+      text-decoration: underline;
+    }
+
+    td a:hover {
+      color: #00cc00;
+    }
+
+    .hidden { display: none; }
+
+    #loginBox, #setupBox, #addBox, #editModal {
+      background: rgba(0, 50, 0, 0.8);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00ff55;
+      margin-top: 1rem;
+    }
+
+    #addBox {
+      width: 95%;
+      max-width: 900px;
+      box-sizing: border-box;
+    }
+
+    #editModal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      max-width: 400px;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.6);
+      z-index: 90;
+      display: none;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .search-wrapper {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #00ff55;
+      background: #001100;
+      padding: 0.3rem 0.6rem;
+      margin-top: 1rem;
+      border-radius: 4px;
+    }
+
+    #search {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #00ff55;
+      font-family: monospace;
+      font-size: 1rem;
+      width: 200px;
+      caret-color: transparent;
+    }
+
+    #cursor {
+      width: 8px;
+      height: 18px;
+      background: #00ff55;
+      margin-left: 3px;
+      animation: blink 0.8s step-end infinite alternate;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      table { font-size: 1rem; width: 100%; }
+      th, td { padding: 8px; }
+      #addBox {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrixCanvas"></canvas>
+  <div class="content">
+    <h1>Matrix Home</h1>
+
+    <div id="loginBox">
+      <p><b>Login</b></p>
+      <input id="user" placeholder="Username" />
+      <input id="pass" placeholder="Password" type="password" />
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="setupBox" class="hidden">
+      <p><b>First Setup - Configure Credentials</b></p>
+      <p style="font-size: 0.9rem;">Create your admin account</p>
+      <input id="setupUser" placeholder="Username" />
+      <input id="setupPass" placeholder="Password (min 6 characters)" type="password" />
+      <input id="setupPassConfirm" placeholder="Confirm Password" type="password" />
+      <button onclick="setupCredentials()">Create Account</button>
+    </div>
+
+    <div id="addBox" class="hidden">
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+        <button onclick="logout()">Logout</button>
+        <button id="toggleEdit" onclick="toggleEditMode()">🛠️ Edit</button>
+        <button onclick="exportData()">💾 Export</button>
+        <button onclick="importData()">📥 Import</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="handleImport(event)">
+        <div id="addInputs" class="hidden">
+          <input id="newSito" class="uppercase" placeholder="Site" />
+          <input id="newLoc" class="uppercase" placeholder="Group" />
+          <input id="newLocal" placeholder="Local link" />
+          <input id="newCloud" placeholder="Cloud link" />
+          <button onclick="addLink()">Add</button>
+        </div>
+      </div>
+
+      <div class="search-wrapper">
+        <input id="search" placeholder="Search..." />
+        <div id="cursor"></div>
+      </div>
+
+      <table id="linkTable"></table>
+    </div>
+
+    <div id="overlay"></div>
+    <div id="editModal" class="hidden">
+      <h3>Edit Link</h3>
+      <input id="editSito" class="uppercase" placeholder="Site" disabled />
+      <input id="editLoc" class="uppercase" placeholder="Group" />
+      <input id="editLocal" placeholder="Local link" />
+      <input id="editCloud" placeholder="Cloud link" />
+      <div style="margin-top:0.5rem;">
+        <button onclick="saveEdit()">Save</button>
+        <button onclick="closeEdit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === MATRIX RAIN ===
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = 'アイカサタナハマヤャラワガザダバパABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + "px monospace";
+      ctx.shadowBlur = 0;
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        const green = Math.floor(Math.random() * 100) + 155;
+        ctx.fillStyle = `rgb(0, ${green}, 0)`;
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 45);
+
+    // Resize canvas when window changes
+    window.addEventListener('resize', () => {
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+    });
+
+    // === LINK LOGIC ===
+    let allLinks = [];
+    let editingLink = null;
+    let editMode = false;
+
+    const table = document.getElementById("linkTable");
+    const search = document.getElementById("search");
+    const loginBox = document.getElementById("loginBox");
+    const setupBox = document.getElementById("setupBox");
+    const addBox = document.getElementById("addBox");
+    const overlay = document.getElementById("overlay");
+    const editModal = document.getElementById("editModal");
+    const addInputs = document.getElementById("addInputs");
+    const toggleBtn = document.getElementById("toggleEdit");
+
+    async function loadLinks() {
+      const res = await fetch("/api/links");
+      if (!res.ok) {
+        if (res.status === 403) {
+          const data = await res.json();
+          if (data.needsSetup) {
+            showSetup();
+            return;
+          }
+        }
+        loginBox.classList.remove("hidden");
+        setupBox.classList.add("hidden");
+        addBox.classList.add("hidden");
+        table.innerHTML = "";
+        return;
+      }
+      allLinks = await res.json();
+      renderTable();
+    }
+
+    // Check if setup is needed on load
+    async function checkSetup() {
+      const res = await fetch("/check-setup");
+      const data = await res.json();
+      if (data.needsSetup) {
+        showSetup();
+        return true;
+      }
+      return false;
+    }
+
+    function showSetup() {
+      loginBox.classList.add("hidden");
+      setupBox.classList.remove("hidden");
+      addBox.classList.add("hidden");
+    }
+
+    async function setupCredentials() {
+      const username = document.getElementById("setupUser").value;
+      const password = document.getElementById("setupPass").value;
+      const passwordConfirm = document.getElementById("setupPassConfirm").value;
+
+      if (!username || !password) {
+        alert("Please enter username and password");
+        return;
+      }
+
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters");
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        alert("Passwords do not match");
+        return;
+      }
+
+      const res = await fetch("/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem('loggedIn', 'true');
+        localStorage.setItem('loginTime', Date.now().toString());
+        setupBox.classList.add("hidden");
+        addBox.classList.remove("hidden");
+        loadLinks();
+      } else {
+        alert(data.error || "Error during setup");
+      }
+    }
+
+    // Check if user is already logged in
+    async function checkLogin() {
+      // First check if setup is needed
+      const needsSetup = await checkSetup();
+      if (needsSetup) return;
+
+      const loggedIn = localStorage.getItem('loggedIn');
+      const loginTime = localStorage.getItem('loginTime');
+      
+      if (loggedIn === 'true' && loginTime) {
+        const dayInMs = 24 * 60 * 60 * 1000;
+        const elapsed = Date.now() - parseInt(loginTime);
+        
+        if (elapsed < dayInMs) {
+          loginBox.classList.add("hidden");
+          setupBox.classList.add("hidden");
+          addBox.classList.remove("hidden");
+          loadLinks();
+          return;
+        } else {
+          localStorage.removeItem('loggedIn');
+          localStorage.removeItem('loginTime');
+        }
+      }
+    }
+
+    function renderTable() {
+      const term = search.value.toLowerCase();
+      const filtered = allLinks.filter(l =>
+        l.SITO.toLowerCase().includes(term) ||
+        l.GROUP?.toLowerCase().includes(term) ||
+        l.LOCAL?.toLowerCase().includes(term) ||
+        l.CLOUD?.toLowerCase().includes(term)
+      );
+      
+      // Sort by category (GROUP) then alphabetically by SITO
+      filtered.sort((a, b) => {
+        const locA = (a.GROUP || "").toUpperCase();
+        const locB = (b.GROUP || "").toUpperCase();
+        
+        if (locA !== locB) {
+          return locA.localeCompare(locB);
+        }
+        return a.SITO.toUpperCase().localeCompare(b.SITO.toUpperCase());
+      });
+      
+      let html = "<tr><th>Site</th><th>Cat</th><th>Local</th><th>Cloud</th>" + (editMode ? "<th>Actions</th>" : "") + "</tr>";
+      filtered.forEach(l => {
+        const icon = l.CLOUD || l.LOCAL
+          ? `<img class='icon' src='https://www.google.com/s2/favicons?sz=64&domain_url=${l.CLOUD || l.LOCAL}'>`
+          : "";
+        const category = l.GROUP ? l.GROUP.charAt(0).toUpperCase() : "-";
+        html += `<tr>
+          <td>${icon}${l.SITO}</td>
+          <td>${category}</td>
+          <td>${l.LOCAL ? `<a href='${l.LOCAL}' target='_blank'>link</a>` : "-"}</td>
+          <td>${l.CLOUD ? `<a href='${l.CLOUD}' target='_blank'>link</a>` : "-"}</td>`;
+        if (editMode) {
+          html += `<td>
+            <button onclick="openEdit('${l.SITO}')">✏️</button>
+            <button onclick="deleteLink('${encodeURIComponent(l.SITO)}')">🗑️</button>
+          </td>`;
+        }
+        html += `</tr>`;
+      });
+      table.innerHTML = html;
+    }
+
+    function toggleEditMode() {
+      editMode = !editMode;
+      addInputs.classList.toggle("hidden", !editMode);
+      toggleBtn.textContent = editMode ? "🔒 Close Edit" : "🛠️ Edit";
+      renderTable();
+    }
+
+    async function login() {
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: document.getElementById("user").value,
+          password: document.getElementById("pass").value
+        })
+      });
+      
+      if (res.status === 403) {
+        const data = await res.json();
+        if (data.needsSetup) {
+          showSetup();
+          return;
+        }
+      }
+      
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem('loggedIn', 'true');
+        localStorage.setItem('loginTime', Date.now().toString());
+        loginBox.classList.add("hidden");
+        addBox.classList.remove("hidden");
+        loadLinks();
+      } else alert("Invalid credentials");
+    }
+
+    async function logout() {
+      await fetch("/logout", { method: "POST" });
+      localStorage.removeItem('loggedIn');
+      localStorage.removeItem('loginTime');
+      addBox.classList.add("hidden");
+      loginBox.classList.remove("hidden");
+      table.innerHTML = "";
+    }
+
+    async function addLink() {
+      const newLink = {
+        SITO: document.getElementById("newSito").value.toUpperCase(),
+        GROUP: document.getElementById("newLoc").value.toUpperCase(),
+        LOCAL: document.getElementById("newLocal").value,
+        CLOUD: document.getElementById("newCloud").value
+      };
+      const res = await fetch("/api/links", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newLink)
+      });
+      if (res.ok) loadLinks();
+    }
+
+    async function deleteLink(sito) {
+      if (!confirm("Delete this link?")) return;
+      const res = await fetch(`/api/links/${sito}`, { method: "DELETE" });
+      if (res.ok) loadLinks();
+    }
+
+    function exportData() {
+      if (allLinks.length === 0) {
+        alert("No links to export");
+        return;
+      }
+      const dataStr = JSON.stringify(allLinks, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `matrix-home-backup-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      alert("Backup downloaded successfully!");
+    }
+
+    function importData() {
+      document.getElementById('importFile').click();
+    }
+
+    async function handleImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const importedLinks = JSON.parse(text);
+
+        if (!Array.isArray(importedLinks)) {
+          alert("Invalid file format");
+          return;
+        }
+
+        if (!confirm(`Import ${importedLinks.length} links? This will replace all current links.`)) {
+          return;
+        }
+
+        const res = await fetch("/api/links/import", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(importedLinks)
+        });
+
+        if (res.ok) {
+          alert("Import successful!");
+          loadLinks();
+        } else {
+          alert("Import failed");
+        }
+      } catch (error) {
+        alert("Error reading file: " + error.message);
+      }
+
+      // Reset file input
+      event.target.value = '';
+    }
+
+    function openEdit(sito) {
+      const l = allLinks.find(x => x.SITO === sito);
+      if (!l) return;
+      editingLink = sito;
+      document.getElementById("editSito").value = l.SITO;
+      document.getElementById("editLoc").value = l.GROUP || "";
+      document.getElementById("editLocal").value = l.LOCAL || "";
+      document.getElementById("editCloud").value = l.CLOUD || "";
+      editModal.classList.remove("hidden");
+      overlay.style.display = "block";
+    }
+
+    function closeEdit() {
+      editingLink = null;
+      editModal.classList.add("hidden");
+      overlay.style.display = "none";
+    }
+
+    async function saveEdit() {
+      const updated = {
+        SITO: document.getElementById("editSito").value.toUpperCase(),
+        GROUP: document.getElementById("editLoc").value.toUpperCase(),
+        LOCAL: document.getElementById("editLocal").value,
+        CLOUD: document.getElementById("editCloud").value
+      };
+      const res = await fetch(`/api/links/${encodeURIComponent(editingLink)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated)
+      });
+      if (res.ok) {
+        closeEdit();
+        loadLinks();
+      }
+    }
+
+    search.addEventListener("input", renderTable);
+    
+    // Auto-focus on search when typing
+    document.addEventListener("keydown", (e) => {
+      // Don't intercept if editing or focus is on an input
+      if (editMode || document.activeElement.tagName === "INPUT") return;
+      
+      // If it's a printable character, focus on search
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        search.focus();
+      }
+    });
+    
+    checkLogin();
+  </script>
+</body>
+</html>
