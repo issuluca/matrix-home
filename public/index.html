@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Matrix Home</title>
+  <style>
+    /* === TEMI === */
+    :root { --bg-primary: #000000; --bg-secondary: #001100; --text-primary: #00ff55; --text-secondary: #00cc00; --border-color: #00ff55; --shadow-color: #00ff55; --table-border: #004400; --addbox-bg: rgba(0,50,0,0.8); --table-bg: rgba(0,0,0,0.75); }
+    html.theme-dark { --bg-primary: #1a1a1a; --bg-secondary: #2d2d2d; --text-primary: #ffffff; --text-secondary: #e0e0e0; --border-color: #404040; --shadow-color: #555555; --table-border: #404040; --addbox-bg: rgba(45,45,45,0.95); --table-bg: rgba(26,26,26,0.9); }
+    html.theme-light { --bg-primary: #ffffff; --bg-secondary: #f5f5f5; --text-primary: #000000; --text-secondary: #333333; --border-color: #cccccc; --shadow-color: #aaaaaa; --table-border: #e0e0e0; --addbox-bg: rgba(240,240,240,0.95); --table-bg: rgba(255,255,255,0.9); }
+    html.theme-retro { --bg-primary: #000000; --bg-secondary: #0a0a0a; --text-primary: #ffaa00; --text-secondary: #cc8800; --border-color: #ffaa00; --shadow-color: #ffaa00; --table-border: #663300; --addbox-bg: rgba(20,10,0,0.85); --table-bg: rgba(0,0,0,0.8); }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0; padding: 0;
+      min-height: 100%;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: monospace;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; display: none; opacity: 0.8; }
+
+    /* === LAYOUT DOPPIO BOX === */
+    .content {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      min-height: 100vh;
+      padding: 1rem;
+      padding-bottom: 2rem;
+    }
+
+    h1 {
+      color: var(--text-primary);
+      margin: 1rem 0;
+      font-size: 2rem;
+      text-align: center;
+      text-shadow: 0 0 10px var(--shadow-color);
+    }
+
+    /* Box esterno */
+    #addBox {
+      width: 95%;
+      max-width: 900px;
+      background: var(--addbox-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px var(--shadow-color);
+      margin-top: 1rem;
+    }
+
+    /* Box interno — la tabella */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 1rem;
+      background: var(--table-bg);
+      box-shadow: 0 0 15px var(--shadow-color);
+    }
+
+    th { text-align: left; padding: 12px 8px; border-bottom: 2px solid var(--table-border); font-size: 0.65rem; opacity: 0.7; cursor: pointer; }
+    td { padding: 12px 8px; border-bottom: 1px solid var(--table-border); font-size: 1.3rem; vertical-align: middle; overflow: hidden; }
+
+    .col-sito { width: 50%; }
+    .col-cat  { width: 10%; text-align: center; }
+    .col-link { width: 20%; text-align: center; }
+    .sito-wrapper { display: flex; align-items: center; }
+
+    .favicon-container {
+      width: 32px; height: 32px; margin-right: 12px; flex-shrink: 0;
+      background: var(--table-border); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .favicon { width: 100%; height: 100%; object-fit: contain; }
+    .sito-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .btn-go { display: inline-block; width: 90%; padding: 6px 0; border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); text-decoration: none; font-size: 1.3rem; font-weight: bold; text-align: center; }
+    .btn-go:hover { background: var(--text-primary); color: var(--bg-primary); }
+
+    /* Input */
+    input { width: 100%; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; outline: none; margin-bottom: 5px; font-family: monospace; }
+
+    /* Hamburger menu */
+    .menu-container { position: fixed; top: 15px; right: 15px; z-index: 100; }
+    .menu-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); font-size: 20px; cursor: pointer; font-family: monospace; }
+    .menu-dropdown { position: absolute; top: 50px; right: 0; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; min-width: 200px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .menu-dropdown.show { display: block; }
+    .menu-item { width: 100%; padding: 12px 15px; border: none; border-bottom: 1px solid var(--table-border); text-align: left; background: none; color: var(--text-primary); cursor: pointer; transition: background 0.2s; font-family: monospace; }
+    .menu-item:hover { background: var(--text-primary); color: var(--bg-primary); }
+    .menu-item:last-child { border-bottom: none; border-radius: 0 0 12px 12px; }
+    .menu-item:first-child { border-radius: 12px 12px 0 0; }
+
+    /* Pannelli slide */
+    .tv-panel { width: 100%; max-width: 400px; display: none; margin: 0 auto 15px; animation: crtOn 0.2s ease-out; }
+    @keyframes crtOn { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 500px) {
+      .favicon-container { width: 26px; height: 26px; margin-right: 8px; }
+      .sito-name { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; white-space: normal; }
+      #addBox { width: 100%; }
+      table { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrixCanvas"></canvas>
+  <div class="menu-container">
+    <button class="menu-btn" onclick="toggleMenu(event)">☰</button>
+    <div class="menu-dropdown" id="dropdown">
+      <button class="menu-item" onclick="togglePanel('searchPanel'); setTimeout(()=>document.getElementById('search').focus(), 50)">🔍 RICERCA</button>
+      <button class="menu-item" onclick="setTheme('auto')">🌓 TEMA: AUTO</button>
+      <button class="menu-item" onclick="setTheme('matrix')">📟 TEMA: MATRIX</button>
+      <button class="menu-item" onclick="setTheme('dark')">🌑 TEMA: DARK</button>
+      <button class="menu-item" onclick="setTheme('light')">☀️ TEMA: LIGHT</button>
+      <button class="menu-item" onclick="setTheme('retro')">📜 TEMA: RETRO</button>
+      <button class="menu-item" id="authStatusBtn" onclick="toggleAuthServer()">🛡️ PROTEZIONE: OFF</button>
+      <button class="menu-item" onclick="enterEditMode()">✏️ MODIFICA</button>
+      <button class="menu-item" onclick="exportData()">💾 EXPORT JSON</button>
+      <button class="menu-item" onclick="importData()">📂 IMPORT JSON</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <h1>Matrix Home</h1>
+    <div id="addBox">
+      <div id="searchPanel" class="tv-panel"><input type="text" id="search" placeholder="Cerca..."></div>
+      <div id="editPanel" class="tv-panel">
+        <div style="display:flex; flex-direction:column; gap:8px; background:var(--bg-secondary); padding:15px; border-radius:12px; border:1px solid var(--border-color);">
+          <input id="editIndex" type="hidden" value="-1">
+          <input id="newSito" placeholder="SITO"><input id="newGroup" placeholder="CAT"><input id="newLocal" placeholder="LOCAL URL"><input id="newCloud" placeholder="CLOUD URL">
+          <button id="btnSave" onclick="saveLink()" style="background:var(--text-primary); color:var(--bg-primary); padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-family:monospace;">SALVA</button>
+          <button onclick="exitEditMode()" style="background:none; border:none; color:var(--text-primary); text-decoration:underline; cursor:pointer; font-family:monospace;">Chiudi</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th class="col-sito" onclick="sortData('SITO')">SITO</th>
+            <th class="col-cat" onclick="sortData('GROUP')">C</th>
+            <th class="col-link">LOC</th>
+            <th class="col-link">CLD</th>
+            <th id="thAction" class="hidden" style="width:40px"></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let allLinks = [];
+    let editMode = false;
+    let sortOrder = { key: 'SITO', asc: true };
+
+    window.onload = () => { initTheme(); loadData(); };
+
+    // --- FIX RICERCA INTELLIGENTE ---
+    document.addEventListener('keydown', (e) => {
+      // Non attivare se si sta già scrivendo in un input
+      if (document.activeElement.tagName === 'INPUT') return;
+      // Attiva solo con tasti alfanumerici
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+        const panel = document.getElementById('searchPanel');
+        const input = document.getElementById('search');
+        panel.style.display = 'block';
+        input.focus();
+      }
+    });
+
+    document.getElementById('search').oninput = function() {
+      // Se svuotato, nasconde il pannello
+      if (this.value.trim() === "") {
+        document.getElementById('searchPanel').style.display = 'none';
+        this.blur();
+      }
+      renderTable();
+    };
+
+    function toggleMenu(e) { e.stopPropagation(); document.getElementById('dropdown').classList.toggle('show'); }
+    document.addEventListener('click', () => document.getElementById('dropdown').classList.remove('show'));
+
+    function togglePanel(id) {
+      document.querySelectorAll('.tv-panel').forEach(p => { if(p.id !== id) p.style.display = 'none'; });
+      const el = document.getElementById(id);
+      if(el) el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    }
+
+    async function loadData() {
+      try {
+        const res = await fetch('/api/links');
+        allLinks = await res.json();
+        renderTable();
+        const setup = await fetch('/api/check-setup');
+        if(setup.ok) {
+          const s = await setup.json();
+          document.getElementById('authStatusBtn').innerText = `🛡️ PROTEZIONE: ${s.authEnabled ? 'ON' : 'OFF'}`;
+        }
+      } catch(e) {}
+    }
+
+    function sortData(key) {
+      sortOrder.asc = (sortOrder.key === key) ? !sortOrder.asc : true;
+      sortOrder.key = key;
+      allLinks.sort((a, b) => {
+        let valA = (a[key] || "").toString().toLowerCase();
+        let valB = (b[key] || "").toString().toLowerCase();
+        return sortOrder.asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      });
+      renderTable();
+    }
+
+    function renderTable() {
+      const term = document.getElementById('search').value.toLowerCase();
+      const filtered = allLinks.filter(l => (l.SITO||"").toLowerCase().includes(term) || (l.GROUP||"").toLowerCase().includes(term));
+      const tbody = document.getElementById('tableBody');
+      const actionTh = document.getElementById('thAction');
+      if(actionTh) actionTh.classList.toggle('hidden', !editMode);
+
+      tbody.innerHTML = filtered.map((l, index) => {
+        const url = l.LOCAL || l.CLOUD || '';
+        let domain = 'localhost';
+        try { if(url) domain = new URL(url.startsWith('http') ? url : 'http://' + url).hostname; } catch(e) {}
+        const iconUrl = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+        const backupIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ff55'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E";
+
+        return `
+          <tr ${editMode ? `onclick="editRecord(${index})" style="cursor:pointer"` : ''}>
+            <td class="col-sito">
+              <div class="sito-wrapper">
+                <div class="favicon-container">
+                  <img src="${iconUrl}" class="favicon" onerror="this.onerror=null; this.src='${backupIcon}';">
+                </div>
+                <span class="sito-name">${l.SITO}</span>
+              </div>
+            </td>
+            <td class="col-cat"><b>${(l.GROUP || "?").charAt(0).toUpperCase()}</b></td>
+            <td class="col-link">${l.LOCAL ? `<a href="${l.LOCAL}" class="btn-go" target="_blank" onclick="event.stopPropagation()">GO</a>` : '<span style="opacity:0.3">-</span>'}</td>
+            <td class="col-link">${l.CLOUD ? `<a href="${l.CLOUD}" class="btn-go" target="_blank" onclick="event.stopPropagation()">GO</a>` : '<span style="opacity:0.3">-</span>'}</td>
+            ${editMode ? `<td style="text-align:center"><button onclick="event.stopPropagation(); deleteLink(${index})" style="cursor:pointer; border:none; background:#ff4444; color:white; border-radius:4px; padding: 2px 8px;">X</button></td>` : ''}
+          </tr>`;
+      }).join('');
+    }
+
+    function editRecord(index) {
+      const l = allLinks[index];
+      document.getElementById('editIndex').value = index;
+      document.getElementById('newSito').value = l.SITO;
+      document.getElementById('newGroup').value = l.GROUP || '';
+      document.getElementById('newLocal').value = l.LOCAL || '';
+      document.getElementById('newCloud').value = l.CLOUD || '';
+      document.getElementById('btnSave').innerText = "AGGIORNA";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function enterEditMode() {
+      if (editMode) { exitEditMode(); return; }
+      editMode = true;
+      document.querySelectorAll('.tv-panel').forEach(p => p.style.display = 'none');
+      document.getElementById('editPanel').style.display = 'block';
+      document.getElementById('editIndex').value = "-1";
+      document.getElementById('btnSave').innerText = "SALVA";
+      renderTable();
+    }
+
+    function exitEditMode() { 
+      editMode = false; 
+      document.getElementById('editPanel').style.display = 'none'; 
+      document.querySelectorAll('#editPanel input').forEach(i => i.value = "");
+      renderTable(); 
+    }
+
+    async function saveLink() {
+      const idx = parseInt(document.getElementById('editIndex').value);
+      const n = { 
+        SITO: document.getElementById('newSito').value.toUpperCase().trim(), 
+        GROUP: document.getElementById('newGroup').value.toUpperCase().trim(), 
+        LOCAL: document.getElementById('newLocal').value.trim(), 
+        CLOUD: document.getElementById('newCloud').value.trim() 
+      };
+      if(!n.SITO) return;
+      if(idx === -1) allLinks.push(n); else allLinks[idx] = n;
+      await saveToServer();
+      exitEditMode();
+      await loadData();
+    }
+
+    async function deleteLink(index) {
+      if(!confirm("Eliminare record?")) return;
+      allLinks.splice(index, 1);
+      await saveToServer();
+      renderTable();
+    }
+
+    async function saveToServer() {
+      await fetch('/api/links', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(allLinks) });
+    }
+
+    async function toggleAuthServer() {
+      const isOff = document.getElementById('authStatusBtn').innerText.includes('OFF');
+      await fetch('/api/config/toggle-auth', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ enabled: isOff }) });
+      loadData();
+    }
+
+    function setTheme(t) { t === 'auto' ? localStorage.removeItem('matrix-theme') : localStorage.setItem('matrix-theme', t); applyTheme(t === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : t); }
+    function applyTheme(t) { document.documentElement.className = 'theme-' + t; const c = document.getElementById('matrixCanvas'); if(c) { c.style.display = (t === 'matrix') ? 'block' : 'none'; if(t === 'matrix') initMatrix(); } }
+    function initTheme() { const s = localStorage.getItem('matrix-theme'); if(s) applyTheme(s); else applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+    function exportData() {
+      if (allLinks.length === 0) { alert("Nessun link da esportare"); return; }
+      const blob = new Blob([JSON.stringify(allLinks, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `matrix-home-backup-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    function importData() { const input = document.createElement('input'); input.type = 'file'; input.onchange = e => { const reader = new FileReader(); reader.onload = async ev => { allLinks = JSON.parse(ev.target.result); await saveToServer(); location.reload(); }; reader.readAsText(e.target.files[0]); }; input.click(); }
+
+    function initMatrix() {
+        const c = document.getElementById("matrixCanvas"); if(!c) return;
+        const ctx = c.getContext("2d"); c.height = window.innerHeight; c.width = window.innerWidth;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; const fontSize = 14; const drops = Array(Math.floor(c.width / fontSize)).fill(1);
+        function draw() { ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, c.width, c.height); ctx.fillStyle = "#00ff00"; ctx.font = fontSize + "px monospace"; for (let i = 0; i < drops.length; i++) { ctx.fillText(letters[Math.floor(Math.random()*letters.length)], i*fontSize, drops[i]*fontSize); if (drops[i]*fontSize > c.height && Math.random() > 0.975) drops[i] = 0; drops[i]++; } }
+        if(window.matrixInterval) clearInterval(window.matrixInterval); window.matrixInterval = setInterval(draw, 45);
+        if(!window.matrixResizeListener) { window.matrixResizeListener = () => { c.height = window.innerHeight; c.width = window.innerWidth; }; window.addEventListener('resize', window.matrixResizeListener); }
+    }
+  </script>
+</body>
+</html>
